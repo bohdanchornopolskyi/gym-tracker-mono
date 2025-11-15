@@ -1,0 +1,17 @@
+{
+	"expo": {
+		"scheme": "gym-tracker-mono",
+		"userInterfaceStyle": "automatic",
+		"orientation": "default",
+		"web": {
+			"bundler": "metro"
+		},
+		"name": "gym-tracker-mono",
+		"slug": "gym-tracker-mono",
+		"plugins": ["expo-font"],
+		"experiments": {
+			"typedRoutes": true,
+			"reactCompiler": true
+		}
+	}
+}

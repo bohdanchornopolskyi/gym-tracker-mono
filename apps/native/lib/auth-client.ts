@@ -6,14 +6,19 @@ import Constants from "expo-constants";
 import * as SecureStore from "expo-secure-store";
 
 export const authClient = createAuthClient({
-	baseURL: process.env.EXPO_PUBLIC_CONVEX_SITE_URL,
-	plugins: [
-		anonymousClient(),
-		expoClient({
-			scheme: Constants.expoConfig?.scheme as string,
-			storagePrefix: Constants.expoConfig?.scheme as string,
-			storage: SecureStore,
-		}),
-		convexClient(),
-	],
+  baseURL: process.env.EXPO_PUBLIC_CONVEX_SITE_URL,
+  plugins: [
+    anonymousClient(),
+    expoClient({
+      scheme: Constants.expoConfig?.scheme as string,
+      storagePrefix: Constants.expoConfig?.scheme as string,
+      storage: SecureStore,
+    }),
+    convexClient(),
+  ],
+  socialProviders: {
+    google: {
+      enabled: true,
+    },
+  },
 });

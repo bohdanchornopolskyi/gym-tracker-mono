@@ -1,5 +1,5 @@
 import { createClient, type GenericCtx } from "@convex-dev/better-auth";
-import { convex } from "@convex-dev/better-auth/plugins";
+import { convex, crossDomain } from "@convex-dev/better-auth/plugins";
 import { expo } from "@better-auth/expo";
 import { components } from "./_generated/api";
 import { DataModel } from "./_generated/dataModel";
@@ -7,7 +7,7 @@ import { query } from "./_generated/server";
 import { betterAuth } from "better-auth";
 import { v } from "convex/values";
 
-const siteUrl = process.env.SITE_URL! || "http://localhost:3001";
+const siteUrl = process.env.SITE_URL!;
 const nativeAppUrl = process.env.NATIVE_APP_URL || "gym-tracker-mono://";
 
 export const authComponent = createClient<DataModel>(components.betterAuth);
@@ -21,7 +21,7 @@ function createAuth(
       disabled: optionsOnly,
     },
     baseURL: siteUrl,
-    trustedOrigins: [siteUrl, nativeAppUrl],
+    trustedOrigins: [siteUrl, "http://localhost:3001", nativeAppUrl],
     database: authComponent.adapter(ctx),
     emailAndPassword: {
       enabled: true,
@@ -33,7 +33,13 @@ function createAuth(
         clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       },
     },
-    plugins: [expo(), convex()],
+    plugins: [
+      expo(),
+      convex(),
+      crossDomain({
+        siteUrl: "http://localhost:3001",
+      }),
+    ],
   });
 }
 

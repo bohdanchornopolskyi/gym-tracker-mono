@@ -128,7 +128,6 @@ export default function SignInForm({
           onClick={() =>
             authClient.signIn.social({
               provider: "google",
-              callbackURL: "/dashboard",
             })
           }>
           Sign In with Google

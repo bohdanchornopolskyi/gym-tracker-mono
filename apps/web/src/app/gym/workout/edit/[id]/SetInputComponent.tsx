@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Id } from "@gym-tracker-mono/backend/convex/_generated/dataModel";
-import { SetInput } from "@/types";
+import type { Id } from "@gym-tracker-mono/backend/convex/_generated/dataModel";
+import type { SetInput } from "@/types";
 import { ChevronDown, ChevronUp, Minus } from "lucide-react";
 
 interface SetInputComponentProps {
@@ -50,7 +50,7 @@ export default function SetInputComponent({
           <Input
             type="number"
             className="h-8 w-14 sm:w-16 text-center"
-            value={set.reps}
+            value={set.reps || ""}
             onChange={(e) =>
               onUpdateField(
                 exerciseId,
@@ -88,7 +88,7 @@ export default function SetInputComponent({
             type="number"
             step="0.5"
             className="h-8 w-16 sm:w-20 text-center"
-            value={set.weight}
+            value={set.weight || ""}
             onChange={(e) =>
               onUpdateField(
                 exerciseId,

@@ -11,8 +11,8 @@ export const list = query({
         v.literal("Legs"),
         v.literal("Shoulders"),
         v.literal("Arms"),
-        v.literal("Core"),
-      ),
+        v.literal("Core")
+      )
     ),
     search: v.optional(v.string()),
   },
@@ -26,7 +26,7 @@ export const list = query({
     if (search) {
       const searchLower = search.toLowerCase();
       exercises = exercises.filter((ex) =>
-        ex.name.toLowerCase().includes(searchLower),
+        ex.name.toLowerCase().includes(searchLower)
       );
     }
 
@@ -43,7 +43,7 @@ export const create = mutation({
       v.literal("Legs"),
       v.literal("Shoulders"),
       v.literal("Arms"),
-      v.literal("Core"),
+      v.literal("Core")
     ),
     muscleGroup: v.optional(v.string()),
   },
@@ -71,8 +71,8 @@ export const update = mutation({
         v.literal("Legs"),
         v.literal("Shoulders"),
         v.literal("Arms"),
-        v.literal("Core"),
-      ),
+        v.literal("Core")
+      )
     ),
     muscleGroup: v.optional(v.string()),
   },
@@ -114,11 +114,6 @@ export const seed = mutation({
     const user = await authComponent.getAuthUser(ctx);
     if (!user) {
       throw new Error("Not signed in");
-    }
-
-    const existingExercises = await ctx.db.query("exercises").collect();
-    if (existingExercises.length > 0) {
-      return { message: "Exercises already seeded", count: 0 };
     }
 
     const exercises = [
@@ -285,10 +280,75 @@ export const seed = mutation({
         category: "Core" as const,
         muscleGroup: "Abdominals",
       },
+      {
+        category: "Chest" as const,
+        muscleGroup: "Upper Pectorals",
+        name: "Incline Barbell Bench press",
+      },
+      {
+        category: "Shoulders" as const,
+        muscleGroup: "Lateral Deltoids",
+        name: "Machine Lateral Raises",
+      },
+      {
+        category: "Chest" as const,
+        muscleGroup: "Pectorals",
+        name: "Machine Flyes",
+      },
+      {
+        category: "Back" as const,
+        muscleGroup: "Lats",
+        name: "Machine Overhead Lat Pulls",
+      },
+      {
+        category: "Back" as const,
+        muscleGroup: "Middle Back ",
+        name: "Chest Assisted Rows",
+      },
+      {
+        category: "Arms" as const,
+        muscleGroup: "Biceps",
+        name: "Hummer Curls",
+      },
+      {
+        category: "Back" as const,
+        muscleGroup: "Lats",
+        name: "Dumbbell Pullovers",
+      },
+      {
+        category: "Arms" as const,
+        muscleGroup: "Forearm",
+        name: "Forearm Overhand Curl",
+      },
+      {
+        category: "Back" as const,
+        muscleGroup: "Upper back",
+        name: "Dumbbell Shrugs",
+      },
+      {
+        category: "Back" as const,
+        muscleGroup: "Back",
+        name: "Machine Chest Assisted Rows",
+      },
+      {
+        category: "Arms" as const,
+        muscleGroup: "Inner forearm ",
+        name: "Forearm Curls",
+      },
     ];
 
+    let insertedCount = 0;
+
     for (const exercise of exercises) {
-      await ctx.db.insert("exercises", exercise);
+      const existing = await ctx.db
+        .query("exercises")
+        .filter((q) => q.eq(q.field("name"), exercise.name))
+        .first();
+
+      if (!existing) {
+        await ctx.db.insert("exercises", exercise);
+        insertedCount++;
+      }
     }
 
     return {

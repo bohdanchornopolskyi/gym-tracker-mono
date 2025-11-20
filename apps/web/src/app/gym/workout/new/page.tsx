@@ -9,23 +9,45 @@ import {
   CardTitle,
   CardContent,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { api } from "@gym-tracker-mono/backend/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import { Calendar, Dumbbell, Loader2, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import React from "react";
 
-export default function NewWorkoutPage() {
+export default function NewWorkoutPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ preset?: string }>
+}) {
   const router = useRouter();
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [date, setDate] = useState<Date>(new Date());
   const [selectedPresetId, setSelectedPresetId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
   const presets = useQuery(api.workoutPresets.list, {});
+
+  const { preset } = React.use(searchParams);
+
+  useEffect(() => {
+    if (preset && presets) {
+      const presetExists = presets.some((p) => p._id === preset);
+      if (presetExists) {
+        setSelectedPresetId(preset);
+      }
+    }
+  }, [preset, presets]);
   const createWorkout = useMutation(api.workouts.create);
   const createSet = useMutation(api.sets.create);
 
@@ -33,7 +55,11 @@ export default function NewWorkoutPage() {
     setIsSaving(true);
     try {
       const workoutId = await createWorkout({
-        date: new Date(date).getTime(),
+        date: date.getTime(),
+        presetId:
+          selectedPresetId && selectedPresetId !== "empty"
+            ? (selectedPresetId as any)
+            : undefined,
       });
 
       if (selectedPresetId && selectedPresetId !== "empty" && presets) {
@@ -83,16 +109,31 @@ export default function NewWorkoutPage() {
             <Card>
               <CardContent className="pt-6">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                  <Label htmlFor="date" className="w-24">
+                  <Label className="w-24">
                     Date
                   </Label>
-                  <Input
-                    id="date"
-                    type="date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    className="max-w-xs"
-                  />
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "max-w-xs justify-start text-left font-normal",
+                          !date && "text-muted-foreground"
+                        )}
+                      >
+                        <Calendar className="mr-2 h-4 w-4" />
+                        {date ? format(date, "PPP") : <span>Pick a date</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <CalendarComponent
+                        mode="single"
+                        selected={date}
+                        onSelect={(newDate) => newDate && setDate(newDate)}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
                 </div>
               </CardContent>
             </Card>

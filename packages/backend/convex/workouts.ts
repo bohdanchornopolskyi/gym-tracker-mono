@@ -66,6 +66,7 @@ export const create = mutation({
     date: v.number(),
     notes: v.optional(v.string()),
     duration: v.optional(v.number()),
+    presetId: v.optional(v.id("workoutPresets")),
   },
   handler: async (ctx, args) => {
     const user = await authComponent.getAuthUser(ctx);

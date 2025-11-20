@@ -26,6 +26,7 @@ export default defineSchema({
     date: v.number(),
     notes: v.optional(v.string()),
     duration: v.optional(v.number()),
+    presetId: v.optional(v.id("workoutPresets")),
   })
     .index("by_user", ["userId"])
     .index("by_user_and_date", ["userId", "date"]),

@@ -176,3 +176,55 @@ export const createFromWorkout = mutation({
   },
 });
 
+export const updateFromWorkout = mutation({
+  args: {
+    presetId: v.id("workoutPresets"),
+    workoutId: v.id("workouts"),
+  },
+  handler: async (ctx, { presetId, workoutId }) => {
+    const user = await authComponent.getAuthUser(ctx);
+    if (!user) {
+      throw new Error("Not signed in");
+    }
+
+    const preset = await ctx.db.get(presetId);
+    if (!preset || preset.userId !== user._id) {
+      throw new Error("Preset not found or unauthorized");
+    }
+
+    const workout = await ctx.db.get(workoutId);
+    if (!workout || workout.userId !== user._id) {
+      throw new Error("Workout not found or unauthorized");
+    }
+
+    const sets = await ctx.db
+      .query("sets")
+      .withIndex("by_workout", (q) => q.eq("workoutId", workoutId))
+      .collect();
+
+    const exerciseGroups = sets.reduce(
+      (groups, set) => {
+        const exerciseId = set.exerciseId;
+        if (!groups[exerciseId]) {
+          groups[exerciseId] = [];
+        }
+        groups[exerciseId].push({
+          reps: set.reps,
+          weight: set.weight,
+          restTime: set.restTime,
+        });
+        return groups;
+      },
+      {} as Record<string, Array<{ reps: number; weight: number; restTime?: number }>>,
+    );
+
+    const exercises = Object.entries(exerciseGroups).map(([exerciseId, sets]) => ({
+      exerciseId: exerciseId as any,
+      sets,
+    }));
+
+    await ctx.db.patch(presetId, {
+      exercises,
+    });
+  },
+});

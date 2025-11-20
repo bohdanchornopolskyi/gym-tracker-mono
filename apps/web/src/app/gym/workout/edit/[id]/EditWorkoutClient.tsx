@@ -8,16 +8,27 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { api } from "@gym-tracker-mono/backend/convex/_generated/api";
-import { Id } from "@gym-tracker-mono/backend/convex/_generated/dataModel";
-import { Exercise, SetInput } from "@/types";
+import type { Id } from "@gym-tracker-mono/backend/convex/_generated/dataModel";
+import type { Exercise, SetInput } from "@/types";
 import { useMutation, useQuery } from "convex/react";
-import { Plus, Save } from "lucide-react";
+import { Plus, Save, RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import ExerciseSelector from "@/app/gym/workout/edit/[id]/ExerciseSelector";
 import ExerciseCard from "@/app/gym/workout/edit/[id]/ExerciseCard";
 import WorkoutDetailsCard from "@/app/gym/workout/edit/[id]/WorkoutDetailsCard";
+import { toast } from "sonner";
 
 type WorkoutExercise = {
   exercise: Exercise;
@@ -33,13 +44,15 @@ export default function EditWorkoutClient({
 }: EditWorkoutClientProps) {
   const router = useRouter();
 
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState<Date | undefined>(undefined);
   const [notes, setNotes] = useState("");
   const [workoutExercises, setWorkoutExercises] = useState<WorkoutExercise[]>(
     [],
   );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [showUpdatePresetDialog, setShowUpdatePresetDialog] = useState(false);
+  const [isUpdatingPreset, setIsUpdatingPreset] = useState(false);
 
   const workout = useQuery(api.workouts.get, { workoutId });
   const exercises = useQuery(api.exercises.list, {});
@@ -47,10 +60,13 @@ export default function EditWorkoutClient({
   const createSet = useMutation(api.sets.create);
   const updateSet = useMutation(api.sets.update);
   const removeSetMutation = useMutation(api.sets.remove);
+  const updatePresetFromWorkout = useMutation(
+    api.workoutPresets.updateFromWorkout,
+  );
 
   useEffect(() => {
     if (workout) {
-      setDate(new Date(workout.date).toISOString().split("T")[0]);
+      setDate(new Date(workout.date));
       setNotes(workout.notes || "");
 
       const exerciseGroups = workout.sets.reduce(
@@ -201,7 +217,7 @@ export default function EditWorkoutClient({
     try {
       await updateWorkout({
         workoutId,
-        date: new Date(date).getTime(),
+        date: date?.getTime() ?? Date.now(),
         notes: notes || undefined,
       });
 
@@ -248,9 +264,32 @@ export default function EditWorkoutClient({
         }
       }
 
-      router.push("/gym/history");
+      toast.success("Workout saved successfully!");
+    } catch (error) {
+      console.error("Failed to save workout:", error);
+      toast.error("Failed to save workout. Please try again.");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+
+  const handleUpdatePreset = async () => {
+    if (!workout?.presetId) return;
+
+    setIsUpdatingPreset(true);
+    try {
+      await updatePresetFromWorkout({
+        presetId: workout.presetId,
+        workoutId,
+      });
+      toast.success("Preset updated successfully!");
+      setShowUpdatePresetDialog(false);
+    } catch (error) {
+      console.error("Failed to update preset:", error);
+      toast.error("Failed to update preset. Please try again.");
+    } finally {
+      setIsUpdatingPreset(false);
     }
   };
 
@@ -268,10 +307,22 @@ export default function EditWorkoutClient({
               Modify your workout details
             </p>
           </div>
-          <Button onClick={saveWorkout} disabled={isSaving}>
-            <Save className="mr-2 h-4 w-4" />
-            {isSaving ? "Saving..." : "Save Changes"}
-          </Button>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            {workout.presetId && (
+              <Button
+                onClick={() => setShowUpdatePresetDialog(true)}
+                disabled={isUpdatingPreset}
+                variant="outline"
+              >
+                <RefreshCw className="mr-2 h-4 w-4" />
+                {isUpdatingPreset ? "Updating..." : "Update Preset"}
+              </Button>
+            )}
+            <Button onClick={saveWorkout} disabled={isSaving}>
+              <Save className="mr-2 h-4 w-4" />
+              {isSaving ? "Saving..." : "Save Changes"}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -326,6 +377,28 @@ export default function EditWorkoutClient({
           )}
         </div>
       </div>
+
+      <AlertDialog
+        open={showUpdatePresetDialog}
+        onOpenChange={setShowUpdatePresetDialog}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Update Preset?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will update the original preset with the current workout
+              data, including all exercises, sets, reps, and weights. This
+              action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleUpdatePreset}>
+              Update Preset
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

@@ -3,36 +3,37 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "../index.css";
 import Providers from "@/components/providers";
 import GlobalNavigation from "@/components/global-navigation";
+import SyncAuthCookies from "@/components/sync-auth-cookies";
 
 const geistSans = Geist({
-	variable: "--font-geist-sans",
-	subsets: ["latin"],
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-	variable: "--font-geist-mono",
-	subsets: ["latin"],
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-	title: "gym-tracker-mono",
-	description: "gym-tracker-mono",
+  title: "gym-tracker-mono",
+  description: "gym-tracker-mono",
 };
 
 export default function RootLayout({
-	children,
+  children,
 }: Readonly<{
-	children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-	return (
-		<html lang="en" suppressHydrationWarning>
-			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-			>
-				<Providers>
-					<GlobalNavigation>{children}</GlobalNavigation>
-				</Providers>
-			</body>
-		</html>
-	);
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <Providers>
+          <SyncAuthCookies />
+          <GlobalNavigation>{children}</GlobalNavigation>
+        </Providers>
+      </body>
+    </html>
+  );
 }

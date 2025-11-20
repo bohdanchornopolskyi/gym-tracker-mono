@@ -17,9 +17,11 @@ import type { Doc } from "@gym-tracker-mono/backend/convex/_generated/dataModel"
 export default async function ProductPage() {
   const token = await getToken();
 
-  console.log("token", token);
-
-  const workouts: Doc<"workouts">[] = [];
+  const workouts: Doc<"workouts">[] = await fetchQuery(
+    api.workouts.list,
+    {},
+    { token }
+  );
 
   const totalWorkouts = workouts?.length || 0;
   const lastWorkoutDate = workouts?.[0]

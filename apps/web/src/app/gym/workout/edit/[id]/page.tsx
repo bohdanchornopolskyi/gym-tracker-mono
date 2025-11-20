@@ -1,4 +1,4 @@
-import { Id } from "@gym-tracker-mono/backend/convex/_generated/dataModel";
+import type { Id } from "@gym-tracker-mono/backend/convex/_generated/dataModel";
 import EditWorkoutClient from "@/app/gym/workout/edit/[id]/EditWorkoutClient";
 
 export default async function EditWorkoutPage({

@@ -28,8 +28,8 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { api } from "@gym-tracker-mono/backend/convex/_generated/api";
-import { Id } from "@gym-tracker-mono/backend/convex/_generated/dataModel";
-import { Exercise, ExerciseCategory, SetInput } from "@/types";
+import type { Id } from "@gym-tracker-mono/backend/convex/_generated/dataModel";
+import type { Exercise, ExerciseCategory, SetInput } from "@/types";
 import { useMutation, useQuery } from "convex/react";
 import {
   ChevronDown,
@@ -64,7 +64,7 @@ export default function NewWorkoutPage() {
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [notes, setNotes] = useState("");
   const [workoutExercises, setWorkoutExercises] = useState<WorkoutExercise[]>(
-    [],
+    []
   );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [presetDialogOpen, setPresetDialogOpen] = useState(false);
@@ -74,9 +74,7 @@ export default function NewWorkoutPage() {
   const presets = useQuery(api.workoutPresets.list, {});
   const preset = useQuery(
     api.workoutPresets.get,
-    presetIdParam
-      ? { presetId: presetIdParam as Id<"workoutPresets"> }
-      : "skip",
+    presetIdParam ? { presetId: presetIdParam as Id<"workoutPresets"> } : "skip"
   );
   const createWorkout = useMutation(api.workouts.create);
   const createSet = useMutation(api.sets.create);
@@ -92,7 +90,7 @@ export default function NewWorkoutPage() {
       const presetExercisesData: WorkoutExercise[] = [];
       for (const presetExercise of preset.exercises) {
         const exercise = preset.exerciseDetails?.find(
-          (e) => e._id === presetExercise.exerciseId,
+          (e) => e._id === presetExercise.exerciseId
         );
         if (exercise) {
           presetExercisesData.push({
@@ -159,7 +157,7 @@ export default function NewWorkoutPage() {
           };
         }
         return we;
-      }),
+      })
     );
   };
 
@@ -174,13 +172,13 @@ export default function NewWorkoutPage() {
           };
         }
         return we;
-      }),
+      })
     );
   };
 
   const removeExercise = (exerciseId: Id<"exercises">) => {
     setWorkoutExercises(
-      workoutExercises.filter((we) => we.exercise._id !== exerciseId),
+      workoutExercises.filter((we) => we.exercise._id !== exerciseId)
     );
   };
 
@@ -188,7 +186,7 @@ export default function NewWorkoutPage() {
     exerciseId: Id<"exercises">,
     setIndex: number,
     field: "reps" | "weight" | "restTime",
-    value: number,
+    value: number
   ) => {
     setWorkoutExercises(
       workoutExercises.map((we) => {
@@ -196,12 +194,12 @@ export default function NewWorkoutPage() {
           return {
             ...we,
             sets: we.sets.map((s, idx) =>
-              idx === setIndex ? { ...s, [field]: value } : s,
+              idx === setIndex ? { ...s, [field]: value } : s
             ),
           };
         }
         return we;
-      }),
+      })
     );
   };
 
@@ -209,7 +207,7 @@ export default function NewWorkoutPage() {
     exerciseId: Id<"exercises">,
     setIndex: number,
     field: "reps" | "weight",
-    increment: number,
+    increment: number
   ) => {
     setWorkoutExercises(
       workoutExercises.map((we) => {
@@ -219,12 +217,12 @@ export default function NewWorkoutPage() {
             sets: we.sets.map((s, idx) =>
               idx === setIndex
                 ? { ...s, [field]: Math.max(0, s[field] + increment) }
-                : s,
+                : s
             ),
           };
         }
         return we;
-      }),
+      })
     );
   };
 
@@ -233,12 +231,16 @@ export default function NewWorkoutPage() {
       return;
     }
 
+    let newWorkoutId: Id<"workouts"> | undefined;
+
     setIsSaving(true);
     try {
       const workoutId = await createWorkout({
         date: new Date(date).getTime(),
         notes: notes || undefined,
       });
+
+      newWorkoutId = workoutId;
 
       for (const we of workoutExercises) {
         for (const set of we.sets) {
@@ -250,6 +252,7 @@ export default function NewWorkoutPage() {
       }
     } finally {
       setIsSaving(false);
+      router.push(`/gym/workout/edit/${newWorkoutId}`);
     }
   };
 
@@ -265,8 +268,7 @@ export default function NewWorkoutPage() {
           </div>
           <Button
             onClick={saveWorkout}
-            disabled={workoutExercises.length === 0 || isSaving}
-          >
+            disabled={workoutExercises.length === 0 || isSaving}>
             <Save className="mr-2 h-4 w-4" />
             {isSaving ? "Saving..." : "Save Workout"}
           </Button>
@@ -306,8 +308,7 @@ export default function NewWorkoutPage() {
             <div className="flex gap-2">
               <Dialog
                 open={presetDialogOpen}
-                onOpenChange={setPresetDialogOpen}
-              >
+                onOpenChange={setPresetDialogOpen}>
                 <DialogTrigger asChild>
                   <Button variant="outline">
                     <BookOpen className="mr-2 h-4 w-4" />
@@ -326,11 +327,10 @@ export default function NewWorkoutPage() {
                           className="cursor-pointer transition-colors hover:bg-accent"
                           onClick={() => {
                             router.push(
-                              `/gym/workout/new?preset=${preset._id}`,
+                              `/gym/workout/new?preset=${preset._id}`
                             );
                             setPresetDialogOpen(false);
-                          }}
-                        >
+                          }}>
                           <CardHeader className="py-3">
                             <CardTitle className="text-base">
                               {preset.name}
@@ -345,12 +345,12 @@ export default function NewWorkoutPage() {
                               {preset.exercises.length !== 1 ? "s" : ""} •{" "}
                               {preset.exercises.reduce(
                                 (sum, ex) => sum + ex.sets.length,
-                                0,
+                                0
                               )}{" "}
                               Set
                               {preset.exercises.reduce(
                                 (sum, ex) => sum + ex.sets.length,
-                                0,
+                                0
                               ) !== 1
                                 ? "s"
                                 : ""}
@@ -412,8 +412,7 @@ export default function NewWorkoutPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => removeExercise(we.exercise._id)}
-                      >
+                        onClick={() => removeExercise(we.exercise._id)}>
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -436,10 +435,9 @@ export default function NewWorkoutPage() {
                                     we.exercise._id,
                                     idx,
                                     "reps",
-                                    -1,
+                                    -1
                                   )
-                                }
-                              >
+                                }>
                                 <ChevronDown className="h-3 w-3" />
                               </Button>
                               <Input
@@ -451,7 +449,7 @@ export default function NewWorkoutPage() {
                                     we.exercise._id,
                                     idx,
                                     "reps",
-                                    parseInt(e.target.value) || 0,
+                                    parseInt(e.target.value) || 0
                                   )
                                 }
                               />
@@ -464,10 +462,9 @@ export default function NewWorkoutPage() {
                                     we.exercise._id,
                                     idx,
                                     "reps",
-                                    1,
+                                    1
                                   )
-                                }
-                              >
+                                }>
                                 <ChevronUp className="h-3 w-3" />
                               </Button>
                               <span className="text-sm">reps</span>
@@ -485,10 +482,9 @@ export default function NewWorkoutPage() {
                                     we.exercise._id,
                                     idx,
                                     "weight",
-                                    -2.5,
+                                    -2.5
                                   )
-                                }
-                              >
+                                }>
                                 <ChevronDown className="h-3 w-3" />
                               </Button>
                               <Input
@@ -501,7 +497,7 @@ export default function NewWorkoutPage() {
                                     we.exercise._id,
                                     idx,
                                     "weight",
-                                    parseFloat(e.target.value) || 0,
+                                    parseFloat(e.target.value) || 0
                                   )
                                 }
                               />
@@ -514,10 +510,9 @@ export default function NewWorkoutPage() {
                                     we.exercise._id,
                                     idx,
                                     "weight",
-                                    2.5,
+                                    2.5
                                   )
-                                }
-                              >
+                                }>
                                 <ChevronUp className="h-3 w-3" />
                               </Button>
                               <span className="text-sm">kg</span>
@@ -527,8 +522,7 @@ export default function NewWorkoutPage() {
                                 variant="ghost"
                                 size="icon"
                                 className="h-8 w-8"
-                                onClick={() => removeSet(we.exercise._id, idx)}
-                              >
+                                onClick={() => removeSet(we.exercise._id, idx)}>
                                 <Minus className="h-4 w-4" />
                               </Button>
                             )}
@@ -539,8 +533,7 @@ export default function NewWorkoutPage() {
                         variant="outline"
                         size="sm"
                         onClick={() => addSet(we.exercise._id)}
-                        className="w-full"
-                      >
+                        className="w-full">
                         <Plus className="mr-2 h-3 w-3" />
                         Add Set
                       </Button>
@@ -587,8 +580,7 @@ function ExerciseSelector({
           value={selectedCategory}
           onValueChange={(v) =>
             setSelectedCategory(v as ExerciseCategory | "All")
-          }
-        >
+          }>
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
@@ -606,8 +598,7 @@ function ExerciseSelector({
         value={selectedCategory}
         onValueChange={(v) =>
           setSelectedCategory(v as ExerciseCategory | "All")
-        }
-      >
+        }>
         <TabsList className="hidden md:grid w-full grid-cols-7">
           <TabsTrigger value="All">All</TabsTrigger>
           {categories.map((cat) => (
@@ -623,8 +614,7 @@ function ExerciseSelector({
                 <Card
                   key={exercise._id}
                   className="cursor-pointer transition-colors hover:bg-accent"
-                  onClick={() => onSelect(exercise)}
-                >
+                  onClick={() => onSelect(exercise)}>
                   <CardHeader className="py-3">
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-base">

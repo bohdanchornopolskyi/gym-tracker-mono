@@ -27,6 +27,10 @@ function StackLayout() {
 				name="modal"
 				options={{ title: "Modal", presentation: "modal" }}
 			/>
+			<Stack.Screen
+				name="exercises-create-modal"
+				options={{ title: "Create Exercise", presentation: "modal" }}
+			/>
 		</Stack>
 	);
 }

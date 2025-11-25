@@ -49,6 +49,15 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="presets"
+        options={{
+          title: "Presets",
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
+            <Ionicons name="bookmark" size={size} color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

@@ -11,42 +11,46 @@ import { KeyboardProvider } from "react-native-keyboard-controller";
 import { AppThemeProvider } from "@/contexts/app-theme-context";
 
 export const unstable_settings = {
-	initialRouteName: "(drawer)",
+  initialRouteName: "(drawer)",
 };
 
 const convexUrl = process.env.EXPO_PUBLIC_CONVEX_URL || "";
 const convex = new ConvexReactClient(convexUrl, {
-	unsavedChangesWarning: false,
+  unsavedChangesWarning: false,
 });
 
 function StackLayout() {
-	return (
-		<Stack screenOptions={{}}>
-			<Stack.Screen name="(drawer)" options={{ headerShown: false }} />
-			<Stack.Screen
-				name="modal"
-				options={{ title: "Modal", presentation: "modal" }}
-			/>
-			<Stack.Screen
-				name="exercises-create-modal"
-				options={{ title: "Create Exercise", presentation: "modal" }}
-			/>
-		</Stack>
-	);
+  return (
+    <Stack screenOptions={{}}>
+      <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="modal"
+        options={{ title: "Modal", presentation: "modal" }}
+      />
+      <Stack.Screen
+        name="exercises-create-modal"
+        options={{ title: "Create Exercise", presentation: "modal" }}
+      />
+      <Stack.Screen
+        name="workout-create-modal"
+        options={{ title: "New Workout", presentation: "modal" }}
+      />
+    </Stack>
+  );
 }
 
 export default function Layout() {
-	return (
-		<ConvexBetterAuthProvider client={convex} authClient={authClient}>
-			<GestureHandlerRootView style={{ flex: 1 }}>
-				<KeyboardProvider>
-					<AppThemeProvider>
-						<HeroUINativeProvider>
-							<StackLayout />
-						</HeroUINativeProvider>
-					</AppThemeProvider>
-				</KeyboardProvider>
-			</GestureHandlerRootView>
-		</ConvexBetterAuthProvider>
-	);
+  return (
+    <ConvexBetterAuthProvider client={convex} authClient={authClient}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <KeyboardProvider>
+          <AppThemeProvider>
+            <HeroUINativeProvider>
+              <StackLayout />
+            </HeroUINativeProvider>
+          </AppThemeProvider>
+        </KeyboardProvider>
+      </GestureHandlerRootView>
+    </ConvexBetterAuthProvider>
+  );
 }

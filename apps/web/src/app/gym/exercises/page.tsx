@@ -30,8 +30,8 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { api } from "@gym-tracker-mono/backend/convex/_generated/api";
-import { Id } from "@gym-tracker-mono/backend/convex/_generated/dataModel";
-import { Exercise, ExerciseCategory } from "@/types";
+import type { Id } from "@gym-tracker-mono/backend/convex/_generated/dataModel";
+import type { Exercise, ExerciseCategory } from "@/types";
 import { useMutation, useQuery } from "convex/react";
 import { Edit, MoreHorizontal, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
@@ -155,8 +155,7 @@ export default function ExercisesPage() {
                     value={newExerciseCategory}
                     onValueChange={(value) =>
                       setNewExerciseCategory(value as ExerciseCategory)
-                    }
-                  >
+                    }>
                     <SelectTrigger id="exercise-category">
                       <SelectValue />
                     </SelectTrigger>
@@ -223,8 +222,7 @@ export default function ExercisesPage() {
                       ...editingExercise,
                       category: value as ExerciseCategory,
                     })
-                  }
-                >
+                  }>
                   <SelectTrigger id="edit-exercise-category">
                     <SelectValue />
                   </SelectTrigger>
@@ -269,20 +267,18 @@ export default function ExercisesPage() {
           defaultValue="All"
           onValueChange={(value) =>
             setSelectedCategory(
-              value === "All" ? undefined : (value as ExerciseCategory),
+              value === "All" ? undefined : (value as ExerciseCategory)
             )
-          }
-        >
+          }>
           <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center">
             <div className="md:hidden">
               <Select
                 value={selectedCategory || "All"}
                 onValueChange={(value) =>
                   setSelectedCategory(
-                    value === "All" ? undefined : (value as ExerciseCategory),
+                    value === "All" ? undefined : (value as ExerciseCategory)
                   )
-                }
-              >
+                }>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -382,8 +378,7 @@ function ExerciseList({
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => onDelete(exercise._id)}
-                        className="text-destructive"
-                      >
+                        className="text-destructive">
                         <Trash2 className="mr-2 h-4 w-4" />
                         Delete
                       </DropdownMenuItem>

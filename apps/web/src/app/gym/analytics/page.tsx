@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { api } from "@gym-tracker-mono/backend/convex/_generated/api";
-import { Id } from "@gym-tracker-mono/backend/convex/_generated/dataModel";
+import type { Id } from "@gym-tracker-mono/backend/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { Activity, Dumbbell, Target } from "lucide-react";
 import { useState } from "react";

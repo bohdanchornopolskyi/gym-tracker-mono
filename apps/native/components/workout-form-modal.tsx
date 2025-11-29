@@ -21,7 +21,7 @@ interface WorkoutFormModalProps {
   onSuccess?: () => void;
 }
 
-export function WorkoutFormModal({
+export default function WorkoutFormModal({
   onClose,
   onSuccess,
 }: WorkoutFormModalProps) {

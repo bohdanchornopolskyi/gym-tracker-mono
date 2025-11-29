@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { WorkoutFormModal } from "./(drawer)/(tabs)/components/workout-form-modal";
+import WorkoutFormModal from "../components/workout-form-modal";
 
 export default function WorkoutCreateModal() {
   const handleClose = () => {

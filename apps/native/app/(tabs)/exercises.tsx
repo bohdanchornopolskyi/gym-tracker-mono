@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   View,
   Text,
@@ -82,8 +83,10 @@ export default function ExercisesScreen() {
     };
   });
 
+  // ...
+
   return (
-    <View className="flex-1 bg-background">
+    <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
       <View
         className="bg-background border-b border-divider"
         style={{ zIndex: 10 }}>
@@ -244,6 +247,6 @@ export default function ExercisesScreen() {
           </View>
         )}
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }

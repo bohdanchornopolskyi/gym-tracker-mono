@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   View,
   Text,
@@ -62,14 +63,14 @@ export default function PresetsScreen() {
   };
 
   const handleEditPreset = (presetId: Id<"workoutPresets">) => {
-    router.push(`/gym/presets/edit/${presetId}`);
+    // router.push(`/gym/presets/edit/${presetId}`);
   };
 
   const isLoading = presets === undefined;
   const hasPresets = presets && presets.length > 0;
 
   return (
-    <View className="flex-1 bg-background">
+    <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
       <View className="bg-background border-b border-divider p-4">
         <Text className="text-2xl font-bold text-foreground mb-1">
           Workout Presets
@@ -132,7 +133,7 @@ export default function PresetsScreen() {
           </View>
         )}
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 

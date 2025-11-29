@@ -8,10 +8,11 @@ import { Stack } from "expo-router";
 import { HeroUINativeProvider } from "heroui-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AppThemeProvider } from "@/contexts/app-theme-context";
 
 export const unstable_settings = {
-  initialRouteName: "(drawer)",
+  initialRouteName: "(tabs)",
 };
 
 const convexUrl = process.env.EXPO_PUBLIC_CONVEX_URL || "";
@@ -22,7 +23,7 @@ const convex = new ConvexReactClient(convexUrl, {
 function StackLayout() {
   return (
     <Stack screenOptions={{}}>
-      <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen
         name="modal"
         options={{ title: "Modal", presentation: "modal" }}
@@ -35,6 +36,11 @@ function StackLayout() {
         name="workout-create-modal"
         options={{ title: "New Workout", presentation: "modal" }}
       />
+      <Stack.Screen
+        name="todos"
+        options={{ title: "Todos", headerShown: true }}
+      />
+      <Stack.Screen name="gym" options={{ headerShown: false }} />
     </Stack>
   );
 }
@@ -45,9 +51,11 @@ export default function Layout() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <KeyboardProvider>
           <AppThemeProvider>
-            <HeroUINativeProvider>
-              <StackLayout />
-            </HeroUINativeProvider>
+            <SafeAreaProvider>
+              <HeroUINativeProvider>
+                <StackLayout />
+              </HeroUINativeProvider>
+            </SafeAreaProvider>
           </AppThemeProvider>
         </KeyboardProvider>
       </GestureHandlerRootView>

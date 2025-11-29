@@ -10,6 +10,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AppThemeProvider } from "@/contexts/app-theme-context";
+import { PortalHost } from "@rn-primitives/portal";
 
 export const unstable_settings = {
   initialRouteName: "(tabs)",
@@ -36,10 +37,6 @@ function StackLayout() {
         name="workout-create-modal"
         options={{ title: "New Workout", presentation: "modal" }}
       />
-      <Stack.Screen
-        name="todos"
-        options={{ title: "Todos", headerShown: true }}
-      />
       <Stack.Screen name="gym" options={{ headerShown: false }} />
     </Stack>
   );
@@ -54,6 +51,7 @@ export default function Layout() {
             <SafeAreaProvider>
               <HeroUINativeProvider>
                 <StackLayout />
+                <PortalHost />
               </HeroUINativeProvider>
             </SafeAreaProvider>
           </AppThemeProvider>

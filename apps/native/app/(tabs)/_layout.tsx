@@ -2,6 +2,7 @@ import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useThemeColor } from "heroui-native";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { ThemeSwitcher } from "@/components/ui/theme-switcher";
 
 export default function TabLayout() {
   const themeColorForeground = useThemeColor("foreground");
@@ -23,7 +24,7 @@ export default function TabLayout() {
           backgroundColor: themeColorBackground,
         },
         // TODO: Add a user menu here(theme toggle inside)
-        headerRight: () => <ThemeToggle />,
+        headerRight: () => <ThemeSwitcher />,
       }}>
       <Tabs.Screen
         name="index"

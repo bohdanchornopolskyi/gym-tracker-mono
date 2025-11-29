@@ -7,6 +7,7 @@ import { useConvexAuth, useQuery } from "convex/react";
 import { api } from "@gym-tracker-mono/backend/convex/_generated/api";
 import { SignIn } from "@/components/sign-in";
 import { authClient } from "@/lib/auth-client";
+import { Button } from "@/components/ui/button";
 
 type NavButton = {
   icon: keyof typeof Ionicons.glyphMap;
@@ -79,6 +80,9 @@ export default function Home() {
             className="self-start mt-2">
             <Text className="text-accent font-medium">Sign Out</Text>
           </Pressable>
+          <Button variant="default" onPress={() => authClient.signOut()}>
+            <Text>Sign Out</Text>
+          </Button>
         </Card>
 
         {/* Quick Actions */}
